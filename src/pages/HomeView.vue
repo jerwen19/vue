@@ -1,65 +1,52 @@
 <template>
-    <div class="shadow-xl w-3/6 bg-gray-200 p-6 rounded-xl">
-        <div class="text-left">
-            <h1 class=" bg-green-600 text-gray-50 inline-block p-2 rounded-md"> List of Username</h1>
-        </div>
-        <p v-if="usersList.length === 0">No user found</p>
-        <ul class="" v-for="user in usersList" :key="user._id">
+    <div class="container">
+      <!-- Tabs to toggle between Sign In and Sign Up -->
+      <div class="tabs">
+        <button @click="showSignIn" :class="{ active: isSignIn }">Sign In</button>
+        <button @click="showSignUp" :class="{ active: !isSignIn }">Sign Up</button>
+      </div>
 
-            <li class="flex justify-between items-center">
-                <router-link v-if="user && user._id" :to="{ name: 'user-profile', params: { id: user._id } }">
-                    {{ user.username }}
+      <!-- Sign In Form -->
+      <div v-if="isSignIn" class="form-container">
+        <h2>Sign In</h2>
+        <form @submit.prevent="handleSignInSubmit">
+          <label for="signInEmail">Email:</label>
+          <input type="email" id="signInEmail" v-model="signInData.email" required>
 
+          <label for="signInPassword">Password:</label>
+          <input type="password" id="signInPassword" v-model="signInData.password" required>
 
-                </router-link>
-                <span v-if="user._id" @click="deleteUserHandler(user._id)"
-                    class="bg-red-700 cursor-pointer inline-block p-2 rounded-full text-gray-50">X</span>
-            </li>
+          <button type="submit">Sign In</button>
+        </form>
+      </div>
 
-        </ul>
+      <!-- Sign Up Form -->
+      <div v-else class="form-container">
+        <h2>Sign Up</h2>
+        <form @submit.prevent="handleSignUpSubmit">
+          <label for="signUpEmail">Email:</label>
+          <input type="email" id="signUpEmail" v-model="signUpData.email" required>
 
-        <router-link class="bg-blue-600 cursor-pointer rounded-lg p-3 inline-block text-gray-50"
-            :to="{ name: 'registration' }">Register
-            User</router-link>
+          <label for="signUpPassword">Password:</label>
+          <input type="password" id="signUpPassword" v-model="signUpData.password" required>
+
+          <label for="confirmPassword">Confirm Password:</label>
+          <input type="password" id="confirmPassword" v-model="signUpData.confirmPassword" required>
+
+          <button type="submit">Sign Up</button>
+        </form>
+      </div>
     </div>
-
-
 </template>
-
+ 
 <script setup>
-import { onMounted, ref } from 'vue'
-import axiosClient from '../axiosClient'
-
-const usersList = ref([])
-const username = ref('')
-const password = ref('')
-const isError = ref(false)
-
-onMounted(async () => {
-    await getUsers()
-})
-
-const getUsers = async () => {
-    isError.value = false;
-    try {
-        const response = await axiosClient.get('/getUsers')
-        usersList.value = response.data.usersList;
-    } catch (err) {
-        console.log(err.message)
-    }
-}
-
-const deleteUserHandler = async (id) => {
-    try {
-        const response = await axiosClient.delete('/deleteUser/' + id)
-        console.log(response)
-        usersList.value = usersList.value.filter(user => user._id !== id);
-    } catch (err) {
-        console.log(err.message)
-    }
-}
-
+import { ref } from 'vue'
+import axiosClient from '../axiosClient.js'
 
 </script>
 
-<style></style>
+
+
+<style>
+
+</style>
